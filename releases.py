@@ -49,18 +49,20 @@ def fetch_releases(repo: str) -> list[str]:
 def main():
     prod_releases = [
         tag for tag in fetch_releases("leanprover/lean4") if tag.startswith("v")
-    ]
+    ][:KEEP_RECENT_RELEASES]
+    print("Following toolchain releases will be used:")
+    print("\n".join(prod_releases))
+
     nightly_releases = [
         tag
         for tag in fetch_releases("leanprover/lean4-nightly")
         if tag.startswith("nightly")
-    ]
+    ][:KEEP_RECENT_NIGHTLY_RELEASES]
+    print("Following nightly toolchain releases will be used:")
+    print("\n".join(nightly_releases))
+
     all_releases = {
-        f"leanprover/lean4:{tag}"
-        for tag in (
-            prod_releases[:KEEP_RECENT_RELEASES]
-            + nightly_releases[:KEEP_RECENT_NIGHTLY_RELEASES]
-        )
+        f"leanprover/lean4:{tag}" for tag in prod_releases + nightly_releases
     }
     all_releases.update(EXTRA_RELEASES)
     all_releases.difference_update(SKIPPED_RELEASES)
