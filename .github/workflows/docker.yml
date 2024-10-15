@@ -58,6 +58,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+      max-parallel: 6 # use this to prevent hitting the rate limit
 
     steps:
       - uses: actions/checkout@v4
