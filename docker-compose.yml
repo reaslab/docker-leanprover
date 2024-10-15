@@ -1,0 +1,10 @@
+name: leanprover
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - LEAN_TOOLCHAIN=leanprover/lean4:v4.13.0-rc3
+    command: ["lean", "--version"]
