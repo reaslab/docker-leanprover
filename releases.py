@@ -13,9 +13,9 @@ KEEP_RECENT_NIGHTLY_RELEASES: int = 10
 EXTRA_RELEASES: list[str] = [
     # nightly-2024-01-01
     "stable",
-    "beta",
+    # "beta",
     "nightly",
-    "lean-toolchain",
+    # "lean-toolchain",
 ]
 """
 Releases that should be skipped, use lean-toolchain format
