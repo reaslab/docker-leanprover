@@ -7,7 +7,7 @@ import logging
 
 import requests
 
-KEEP_RECENT_RELEASES: int = 20
+KEEP_RECENT_RELEASES: int = 30
 KEEP_RECENT_NIGHTLY_RELEASES: int = 10
 
 EXTRA_RELEASES: list[str] = [
