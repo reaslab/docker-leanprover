@@ -3,6 +3,7 @@ from itertools import count
 import json
 import os
 from typing import Any
+import logging
 
 import requests
 
@@ -29,7 +30,11 @@ Releases that should be skipped, use lean-toolchain format
 """
 
 
-def fetch_releases(repo: str) -> list[str]:
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def fetch_releases(repo: str, limit: int | None = None) -> list[str]:
     all_releases: list[dict[str, Any]] = []
     for page in count(1):
         response = requests.get(
@@ -43,28 +48,39 @@ def fetch_releases(repo: str) -> list[str]:
         )
         response.raise_for_status()
         releases: list[dict[str, Any]] = response.json()
+        logger.info("Got %d releases from %r", len(releases), repo)
         all_releases.extend(releases)
+        if not releases or (limit is not None and len(all_releases) >= limit):
+            break
     all_releases.sort(
         key=lambda release: datetime.fromisoformat(release["published_at"]),
         reverse=True,
     )
+    if limit is not None:
+        all_releases = all_releases[:limit]
     return [release["tag_name"] for release in all_releases]
 
 
 def main():
     prod_releases = [
-        tag for tag in fetch_releases("leanprover/lean4") if tag.startswith("v")
-    ][:KEEP_RECENT_RELEASES]
-    print("Following toolchain releases will be used:")
-    print("\n".join(prod_releases))
+        tag
+        for tag in fetch_releases("leanprover/lean4", KEEP_RECENT_RELEASES)
+        if tag.startswith("v")
+    ]
+    # print("Following toolchain releases will be used:")
+    # print("\n".join(prod_releases))
+    logger.info("Following toolchain releases will be used: %r", prod_releases)
 
     nightly_releases = [
         tag
-        for tag in fetch_releases("leanprover/lean4-nightly")
+        for tag in fetch_releases(
+            "leanprover/lean4-nightly", KEEP_RECENT_NIGHTLY_RELEASES
+        )
         if tag.startswith("nightly")
-    ][:KEEP_RECENT_NIGHTLY_RELEASES]
-    print("Following nightly toolchain releases will be used:")
-    print("\n".join(nightly_releases))
+    ]
+    logger.info(
+        "Following nightly toolchain releases will be used: %r", nightly_releases
+    )
 
     all_releases = [
         tag
