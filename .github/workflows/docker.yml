@@ -79,15 +79,15 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             LEAN_TOOLCHAIN=${{ matrix.toolchain }}
-          platforms: linux/amd64, linux/arm64
+          # platforms: linux/amd64, linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Test image
-        run: docker run --rm ${{ steps.build.outputs.digest }} lean --version
+        run: docker run --rm ${{ steps.meta.outputs.tags }} lean --version
 
       - name: Push image
-        run: docker push ${{ steps.build.outputs.digest }}
+        run: docker push ${{ steps.meta.outputs.tags }}
 
       - uses: actions/attest-build-provenance@v1
         with:
