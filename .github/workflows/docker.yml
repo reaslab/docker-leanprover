@@ -32,9 +32,6 @@ jobs:
         with:
           cache: pip
 
-      - name: Install dependencies
-        run: pip install requests
-
       - id: discover
         name: Discover
         run: python releases.py
