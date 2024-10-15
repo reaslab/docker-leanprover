@@ -10,14 +10,19 @@ KEEP_RECENT_RELEASES: int = 20
 KEEP_RECENT_NIGHTLY_RELEASES: int = 10
 
 EXTRA_RELEASES: list[str] = [
-    # leanprover/lean4:nightly-2024-01-01
+    # nightly-2024-01-01
+    "stable",
+    "beta",
+    "nightly",
+    "lean-toolchain",
 ]
 """
 Releases that should be skipped, use lean-toolchain format
 """
 
 SKIPPED_RELEASES: list[str] = [
-    # leanprover/lean4:4.0.0
+    # 4.0.0
+    # nightly-2024-01-01
 ]
 """
 Releases that should be skipped, use lean-toolchain format
@@ -61,13 +66,16 @@ def main():
     print("Following nightly toolchain releases will be used:")
     print("\n".join(nightly_releases))
 
-    all_releases = {
-        f"leanprover/lean4:{tag}" for tag in prod_releases + nightly_releases
-    }
-    all_releases.update(EXTRA_RELEASES)
-    all_releases.difference_update(SKIPPED_RELEASES)
+    all_releases = [
+        tag
+        for tag in (
+            set(prod_releases + nightly_releases)
+            | set(EXTRA_RELEASES) - set(SKIPPED_RELEASES)
+        )
+    ]
+    all_releases.sort(reverse=True)
     with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-        f.write("matrix=" + json.dumps({"toolchain": [*all_releases]}) + "\n")
+        f.write("matrix=" + json.dumps({"toolchain": all_releases}) + "\n")
     return
 
 
