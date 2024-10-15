@@ -34,8 +34,10 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          cache: pip
           python-version: 3.x
+
+      - name: Install dependencies
+        run: pip install requests
 
       - id: discover
         name: Discover
@@ -50,9 +52,8 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       id-token: write
+      attestations: write
 
     strategy:
       fail-fast: false
