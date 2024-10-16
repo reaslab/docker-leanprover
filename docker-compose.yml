@@ -6,5 +6,13 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - LEAN_TOOLCHAIN=leanprover/lean4:v4.13.0-rc3
-    command: ["lean", "--version"]
+        - LEAN_TOOLCHAIN=leanprover-community/mathlib4:lean-toolchain
+    network_mode: host
+    command:
+      - /bin/bash
+      - -c
+      - |
+        git clone https://github.com/leanprover-community/mathlib4 ~/mathlib --depth 1 &&
+        cd ~/mathlib &&
+        lake build &&
+        lake test
