@@ -13,7 +13,7 @@ RUN --mount=type=tmpfs,target=/tmp \
     curl -sSfL https://github.com/leanprover/elan/raw/master/elan-init.sh -o elan-init.sh && \
     chmod +x elan-init.sh && \
     ./elan-init.sh -v -y --no-modify-path --default-toolchain ${LEAN_TOOLCHAIN} && \
-    mv -v /tmp/elan/toolchains/*/ /opt/lean
+    cp -rv /tmp/elan/toolchains/*/ /opt/lean
 
 FROM ubuntu:latest AS runner
 
