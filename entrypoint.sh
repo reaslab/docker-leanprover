@@ -35,4 +35,12 @@ GID=${GID:-1000}
 groupadd -g $GID $GROUP
 useradd -m -u $UID -g $GID $USER
 
+# check if XDG_CACHE_HOME is set
+if [ "$XDG_CACHE_HOME" != "" ]; then
+    if [ ! -d "$XDG_CACHE_HOME" ]; then
+        mkdir -p "$XDG_CACHE_HOME"
+    fi
+    chown -R $USER:$GROUP "$XDG_CACHE_HOME"
+fi
+
 exec gosu $USER:$GROUP "$@"

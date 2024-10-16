@@ -1,4 +1,4 @@
-FROM ubuntu:latest as base
+FROM ubuntu:latest AS base
 ENV DEBIAN_FRONTEND=noninteractive
 RUN userdel -r ubuntu && \
     groupadd -g 1000 lean && \
@@ -21,5 +21,8 @@ RUN --mount=type=tmpfs,target=/tmp \
 FROM base AS runner
 COPY --from=builder /opt/lean /opt/lean
 ENV PATH=/opt/lean/bin:$PATH
+ENV UID=1000 USER=lean \
+    GID=1000 GROUP=lean \
+    XDG_CACHE_HOME=/var/cache/lean
 COPY ./entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/usr/bin/tini", "--", "/entrypoint.sh"]
