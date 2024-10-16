@@ -13,13 +13,13 @@ RUN --mount=type=tmpfs,target=/tmp \
     curl -sSfL https://github.com/leanprover/elan/raw/master/elan-init.sh -o elan-init.sh && \
     chmod +x elan-init.sh && \
     ./elan-init.sh -v -y --no-modify-path --default-toolchain ${LEAN_TOOLCHAIN} && \
-    mv /tmp/elan/toolchains/$(echo ${LEAN_TOOLCHAIN} | sed -e 's/\//--/g' -e 's/:/---/g') /opt/lean
+    mv -v /tmp/elan/toolchains/*/ /opt/lean
 
 FROM ubuntu:latest AS runner
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates git tini gosu && \
+    apt-get install -y --no-install-recommends ca-certificates curl git tini gosu && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
