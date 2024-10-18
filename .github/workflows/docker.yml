@@ -79,7 +79,7 @@ jobs:
             type=raw,value=${{ matrix.toolchain }},priority=500
 
       - id: build-and-push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
