@@ -7,6 +7,11 @@ GROUP=${GROUP:-"lean"}
 UID=${UID:-1000}
 GID=${GID:-1000}
 
+# if uid or gid equal to 0, we just run the command directly
+if [ $UID -eq 0 ] || [ $GID -eq 0 ]; then
+    exec "$@"
+fi
+
 # there are serval cases we need to couple with
 (
     exec 2>/dev/null
