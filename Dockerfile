@@ -19,6 +19,10 @@ RUN --mount=type=tmpfs,target=/tmp \
     cp -rv /tmp/elan/toolchains/*/ /opt/lean
 
 FROM base AS runner
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get install -y --no-install-recommends nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 COPY --from=builder /opt/lean /opt/lean
 ENV PATH=/opt/lean/bin:$PATH
 ENV UID=1000 USER=lean \
