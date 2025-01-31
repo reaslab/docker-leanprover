@@ -3,18 +3,22 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN userdel -r ubuntu && \
     groupadd -g 1000 lean && \
     useradd -m -u 1000 -g lean lean
-RUN --mount=type=cache,target=/var/cache \
-    apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates curl git tini gosu zstd && \
-    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
-    apt-get install -y --no-install-recommends nodejs && \
-    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+ADD https://deb.nodesource.com/setup_lts.x /src/setup_nodesource.sh
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    bash ./setup_nodesource.sh && \
+    apt-get install -y --no-install-recommends ca-certificates curl git tini gosu zstd nodejs
 
 ARG LEAN_TOOLCHAIN=stable
-RUN --mount=type=bind,dst=/src,rw \
-    node /src/releases.mjs download ${LEAN_TOOLCHAIN} /src && \
-    tar -xvf /src/lean-* -C /opt && \
-    mv /opt/lean-* /opt/lean
+COPY /releases.mjs /src/releases.mjs
+RUN --mount=type=tmpfs,target=/tmp \
+    node /src/releases.mjs download ${LEAN_TOOLCHAIN} && \
+    tar -xvf ./lean-*.tar.* -C /opt && \
+    mv /opt/lean-* /opt/lean && \
+    rm -rf /src
 
 ENV PATH=/opt/lean/bin:$PATH
 ENV UID=1000 USER=lean \
