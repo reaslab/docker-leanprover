@@ -13,11 +13,10 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     apt-get install -y --no-install-recommends ca-certificates curl git tini gosu zstd nodejs
 
 ARG LEAN_TOOLCHAIN=stable
-COPY /releases.mjs /src/releases.mjs
-RUN --mount=type=tmpfs,target=/tmp \
-    node /src/releases.mjs download ${LEAN_TOOLCHAIN} && \
-    tar -xvf ./lean-*.tar.* -C /opt && \
-    mv /opt/lean-* /opt/lean && \
+COPY ./releases.mjs /src/releases.mjs
+RUN node ./releases.mjs download ${LEAN_TOOLCHAIN} && \
+    mkdir /opt/lean && \
+    tar -xvf ./lean-*.tar.* -C /opt/lean --strip-components=1 && \
     rm -rf /src
 
 ENV PATH=/opt/lean/bin:$PATH
