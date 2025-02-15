@@ -14,7 +14,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
 
 ARG LEAN_TOOLCHAIN=stable
 COPY ./releases.mjs /src/releases.mjs
-RUN node ./releases.mjs download ${LEAN_TOOLCHAIN} && \
+RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN \
+    node ./releases.mjs download ${LEAN_TOOLCHAIN} && \
     mkdir /opt/lean && \
     tar -xvf ./lean-*.tar.* -C /opt/lean --strip-components=1 && \
     rm -rf /src

@@ -51,7 +51,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
-      max-parallel: 6 # use this to prevent hitting the rate limit
 
     steps:
       - uses: smorimoto/tune-github-hosted-runner-network@v1
@@ -83,6 +82,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             LEAN_TOOLCHAIN=${{ matrix.toolchain }}
+          secrets: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           platforms: linux/amd64, linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
