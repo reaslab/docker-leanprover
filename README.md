@@ -20,7 +20,7 @@ docker pull ghcr.io/reaslab/docker-leanprover:<toolchain>
 docker run --rm -it ghcr.io/reaslab/docker-leanprover:<toolchain>
 ```
 
-Replace `<toolchain>` with e.g. `v4.15.0`.
+Replace `<toolchain>` with actual version (e.g. `v4.24.0`).
 
 ### Available Tags
 
